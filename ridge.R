@@ -1,4 +1,4 @@
-#simulating data
+＃＃＃#simulating data
 m <- 100
 n <- 5
 x <- matrix(rnorm(m*n, mean=0, sd=1),nrow = m, ncol= n)  #simulating the matrix, with n=5 for tem,hum,ppd42_1,pd42_2,ppd42_3, m=100:observations.
