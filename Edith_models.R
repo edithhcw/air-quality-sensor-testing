@@ -10,8 +10,8 @@ head(dust)
 X = dust[,4:10]
 Y = dust$ppd60_3
 n = nrow(X)
-train = 1:round(n*.7)
-valid = round(n*.7 + 1):n
+train = sample(1:nrow(dust), (nrow(dust) * .7))
+valid = -train
 
 lm.mod = lm(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, dust)
 summary(lm.mod)
