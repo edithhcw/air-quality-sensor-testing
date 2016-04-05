@@ -1,4 +1,4 @@
-library(lars)
+library(quantreg)
 library (ISLR)
 library(plsdof)
 library(pls)
@@ -25,12 +25,8 @@ MSE <- (sum((Y[valid] - pcr.pred)^2))/length(pcr.pred)
 print(MSE)
 
 #L1 Regression
-x <- as.matrix(X[train,])
-y <- as.matrix(Y[train])
-tx <- as.matrix(X[valid,])
-ty <- as.matrix(Y[valid])
-fit <- lars(x, y, type="lasso")
-best_step <- fit$df[which.min(fit$RSS)]
-predictions <- predict(fit, tx, s=best_step, type="fit")$fit
-rmse <- mean((ty - predictions)^2)
-print(rmse)
+model.rq <- rq(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, data = dust[train,], tau = .5)
+print(model.rq)
+pre = predict(model.rq, newdata=X[valid,])
+MSE2 <- (sum((test$ppd60_3 - pre)^2))/length(pre)
+MSE2
