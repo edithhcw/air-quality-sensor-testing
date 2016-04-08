@@ -22,14 +22,12 @@ train = sample(1:nrow(dust), (nrow(dust) * .7))
 valid = -train
 
 ## linear regression
-
-
 lm.mod = lm(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, dust)
 summary(lm.mod)
 
 lm.mod2 = lm(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, dust[train,])
 summary(lm.mod2)
-plot(lm.mod2)
+#plot(lm.mod2)
 
 yhat_lm = predict(lm.mod2, newdata = X[valid,])
 plot(yhat_lm, type='l', main="Linear Regression",
@@ -50,8 +48,8 @@ MSE.lm3 <- (sum((Y[valid] - predict(lm.mod3, newdata = X[valid,]))^2))/length(Y[
 MSE.lm3
 
 
-glm.fit <- glm(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, dust[train,])
-cv.err <- cv.glm(dust[train,], glm.fit)
+#glm.fit <- glm(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, dust[train,])
+#cv.err <- cv.glm(dust[train,], glm.fit)
 
 ## random forest
 # all predictors
@@ -69,7 +67,7 @@ par(new=F)
 importance(dust.rf)
 varImpPlot(dust.rf)
 
-mean((Y[valid] - yhat.rf)^2)
+MSE.rf1 <- mean((Y[valid] - yhat.rf)^2)
 plot(yhat.rf, Y[valid])
 abline(0,1)
 
@@ -88,7 +86,7 @@ plot(yhat.rf2, type='l', main="Random Forest",
 par(new=T)
 plot(Y[valid], col='firebrick1',type='l', ylab='')
 par(new=F)
-mean((Y[valid] - yhat.rf2)^2) #higher MSE but expected
+MSE.rf2 <- mean((Y[valid] - yhat.rf2)^2) #higher MSE but expected
 plot(yhat.rf2, Y[valid])
 abline(0,1)
 importance(dust.rf2)
@@ -108,31 +106,22 @@ tree.pred <- predict(tree.dust.train, dust[valid,])
 
 ## jim's
 
-d <- dust[,4:11]
-pairs(dust[,4:11])
-
-X = dust[,4:10]
-Y = dust$ppd60_3
-n = nrow(X)
-train = 1:round(n*.7)
-valid = round(n*.7 + 1):n
-
 #PCR
-
+d = dust[,4:11]
 pcr.fit=pcr(ppd60_3~., data=d, subset=train, scale=TRUE, validation="CV")
 res = MSEP(pcr.fit)
 pcr.best=which.min(res$val[1,,])-1
 cv = res$val[,,pcr.best+1]
 pcr.pred=predict(pcr.fit, X[valid,], ncomp=pcr.best)
-MSE <- (sum((Y[valid] - pcr.pred)^2))/length(pcr.pred)
-print(MSE)
+MSE.pcr <- (sum((Y[valid] - pcr.pred)^2))/length(pcr.pred)
+print(MSE.pcr)
 
 #L1 Regression
 model.rq <- rq(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, data = dust[train,], tau = .5)
 print(model.rq)
 pre = predict(model.rq, newdata=X[valid,])
-MSE2 <- (sum((test$ppd60_3 - pre)^2))/length(pre)
-MSE2
+MSE.l1reg <- (sum((Y[valid] - pre)^2))/length(pre)
+MSE.l1reg
 
 ##yc
 ###ridge
@@ -150,7 +139,7 @@ plot(cv.out)
 bestlam1=cv.out$lambda.min #bestlam:lambda that results in the smallest cv error
 
 ridge.pred=predict(ridge.mod,s=bestlam1,newx=x[test,])
-mean((ridge.pred-y.test)^2) # MSE associated with the best lambda
+MSE.ridge <- mean((ridge.pred-y.test)^2) # MSE associated with the best lambda
 mean(abs(ridge.pred-y.test)) # MAE associated with the best lambda
 out=glmnet(x,y,alpha=0)
 predict(out,type="coefficients",s=bestlam1)[1:6,]
@@ -165,9 +154,11 @@ cv.out=cv.glmnet(x[train,],y[train],alpha=1)
 plot(cv.out)
 bestlam2=cv.out$lambda.min
 lasso.pred=predict(lasso.mod,s=bestlam2,newx=x[test,])
-mean((lasso.pred-y.test)^2) #MSE
+MSE.lasso <- mean((lasso.pred-y.test)^2) #MSE
 mean(abs(lasso.pred-y.test)) #MAE
 out=glmnet(x,y,alpha=1,lambda=grid)
 lasso.coef=predict(out,type="coefficients",s=bestlam2)[1:6,]
 lasso.coef
 lasso.coef[lasso.coef!=0]
+
+min(c(MSE.lm, MSE.lm3, MSE.rf1, MSE.rf2, MSE.pcr, MSE.l1reg, MSE.ridge, MSE.lasso))
