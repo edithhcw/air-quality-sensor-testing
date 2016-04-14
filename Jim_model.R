@@ -28,5 +28,5 @@ print(MSE)
 model.rq <- rq(ppd60_3~temperature+humidity+ppd42_1+ppd42_2+ppd42_3, data = dust[train,], tau = .5)
 print(model.rq)
 pre = predict(model.rq, newdata=X[valid,])
-MSE2 <- (sum((test$ppd60_3 - pre)^2))/length(pre)
+MSE2 <- (sum((Y[valid] - pre)^2))/length(pre)
 MSE2
