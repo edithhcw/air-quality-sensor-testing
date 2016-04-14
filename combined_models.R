@@ -193,6 +193,7 @@ for (i in 1:6){
 	}
 }
 
+print(result[[index]]$name)
 print(result[[index]]$error)
-print(min)
+
 
