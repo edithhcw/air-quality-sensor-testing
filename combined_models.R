@@ -13,8 +13,8 @@ set.seed(1)
 # loading in data
 dust <- read.csv('/Users/edithho/Google Drive/cal/2016 spring/air-quality-sensor_testing/Dust Sensor Comparison.csv')# pairs(dust[,4:11])
 head(dust)
-X = dust[,4:6]
-Y = dust$ppd60_3
+X = dust[1:1000,4:6]
+Y = dust$ppd60_3[1:1000]
 n = nrow(X)
 train = sample(1:nrow(dust), (nrow(dust) * .7))
 valid = -train
@@ -100,48 +100,33 @@ l1LinearReg <- function(dust, X, Y, train, valid, relation) {
 }
 ##yc
 ###ridge
-Ridge <- function(dust, x, y, train, valid) {
-	grid=10^seq(-1,-3,length=100)
-	ridge.mod=glmnet(x,y,alpha=0,lambda=grid)
-	dim(coef(ridge.mod))  #6*100
-
-	#cv
-	y.test=y[valid]
-
-	cv.out=cv.glmnet(x[train,],y[train],alpha=0)
-	plot(cv.out)
-	bestlam1=cv.out$lambda.min #bestlam:lambda that results in the smallest cv error
-
-	ridge.pred=predict(ridge.mod,s=bestlam1,newx=x[valid,])
-	MSE.ridge <- mean((ridge.pred-y.test)^2) # MSE associated with the best lambda
-	mean(abs(ridge.pred-y.test)) # MAE associated with the best lambda
-	out=glmnet(x,y,alpha=0)
-	predict(out,type="coefficients",s=bestlam1)[1:6,]
-
-	ret <- list("model" = ridge.mod, "error" = MSE.ridge, "bestlam" = bestlam1,  "name" = "Ridge Regression")
-	return(ret)
+Ridge <- function(dust, X, Y, train, valid) {
+  grid=10^seq(-1,-3,length=100)
+  ridge.mod=glmnet(X,Y,alpha=0,lambda=grid)
+  dim(coef(ridge.mod))  #6*100
+  
+  cv.out=cv.glmnet(X[train,],Y[train],alpha=0)
+  bestlam1=cv.out$lambda.min #bestlam:lambda that results in the smallest cv error
+  
+  ridge.pred=predict(ridge.mod,s=bestlam1,newx=X[valid,])
+  MSE.ridge <- mean((ridge.pred-Y[valid])^2) # MSE associated with the best lambda
+  
+  ret <- list("model" = ridge.mod, "error" = MSE.ridge, "bestlam" = bestlam1,  "name" = "Ridge Regression")
+  return(ret)
 }
 
-Lasso <- function(dust, x, y, train, valid) {
-###lasso
-	lasso.mod=glmnet(x[train,],y[train],alpha=1,lambda=grid)
-	dim(coef(lasso.mod))
-	plot(lasso.mod)
-	y.test=y[valid]
-	cv.out=cv.glmnet(x[train,],y[train],alpha=1)
-	plot(cv.out)
-	bestlam2=cv.out$lambda.min
-	lasso.pred=predict(lasso.mod,s=bestlam2,newx=x[valid,])
-	MSE.lasso <- mean((lasso.pred-y.test)^2) #MSE
-	mean(abs(lasso.pred-y.test)) #MAE
-	out=glmnet(x,y,alpha=1,lambda=grid)
-	lasso.coef=predict(out,type="coefficients",s=bestlam2)[1:6,]
-	lasso.coef
-	lasso.coef[lasso.coef!=0]
-
-	ret <- list("model" = lasso.mod, "error" = MSE.lasso, "bestlam" = bestlam2,  "name" = "Lasso Regression")
-	return(ret)
+Lasso <- function(dust, X, Y, train, valid) {
+  ###lasso
+  lasso.mod=glmnet(X[train,],Y[train],alpha=1,lambda=grid)
+  cv.out=cv.glmnet(X[train,],Y[train],alpha=1)
+  bestlam2=cv.out$lambda.min
+  lasso.pred=predict(lasso.mod,s=bestlam2,newx=X[valid,])
+  MSE.lasso <- mean((lasso.pred-Y[valid])^2) #MSE
+  
+  ret <- list("model" = lasso.mod, "error" = MSE.lasso, "bestlam" = bestlam2,  "name" = "Lasso Regression")
+  return(ret)
 }
+
 
 relation <- formula(ppd60_3~temperature+humidity+ppd42_1)
 result.l2 <- l2LinearRe(dust, X, Y, train, valid, relation)
