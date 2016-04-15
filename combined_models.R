@@ -11,7 +11,7 @@ library(pls)
 set.seed(1)
 
 # loading in data
-dust <- read.csv('/Users/jimbai/Desktop/urapg/sensor/dummy.csv')# pairs(dust[,4:11])
+dust <- read.csv('/Users/edithho/Google Drive/cal/2016 spring/air-quality-sensor_testing/Dust Sensor Comparison.csv')# pairs(dust[,4:11])
 head(dust)
 X = dust[,4:6]
 Y = dust$ppd60_3
@@ -54,10 +54,9 @@ l2LinearRe <- function(dust, X, Y, train, valid, relation) {
 #cv.err <- cv.glm(dust[train,], glm.fit)
 
 ## random forest
-# all predictors
 RanForest <- function(dust, X, Y, train, valid, relation) {
 	dust.rf <- randomForest(relation, data=dust, subset=train,
-                        mtry=7, ntree=25)
+	                        ntree=100)
 	dust.rf
 	yhat.rf <- predict(dust.rf, newdata=X[valid,])
 	plot(yhat.rf, type='l', main="Random Forest",
@@ -69,42 +68,10 @@ RanForest <- function(dust, X, Y, train, valid, relation) {
 	varImpPlot(dust.rf)
 
 	MSE.rf1 <- mean((Y[valid] - yhat.rf)^2)
-	plot(yhat.rf, Y[valid])
-	abline(0,1)
 
-	ret <- list("model" = dust.rf, "error" = MSE.rf1,  "name" = "Random Forest")
+	ret <- list("model" = dust.rf, "error" = MSE.rf1, 'importance' = importance(dust.rf),
+	            "name" = "Random Forest")
 	return(ret)
-	# without the two pp60
-	dust.rf2 <- randomForest(relation, data=dust, subset=train,
-                         mtry=5, ntree=25)
-
-	dust.rf3 <- randomForest(dust[train,c(4:8)], dust$ppd60_3[train],
-                         mtry=5, ntree=25)
-
-	dust.rf2
-	yhat.rf2 <- predict(dust.rf2, newdata=X[valid,])
-	plot(yhat.rf2, type='l', main="Random Forest",
-     	col='cornflowerblue',ylab="Values")
-	par(new=T)
-	plot(Y[valid], col='firebrick1',type='l', ylab='')
-	par(new=F)
-	MSE.rf2 <- mean((Y[valid] - yhat.rf2)^2) #higher MSE but expected
-	plot(yhat.rf2, Y[valid])
-	abline(0,1)
-	importance(dust.rf2)
-	varImpPlot(dust.rf2)
-
-
-	## regression tree/random forest
-	tree.dust <- tree(relation, dust)
-	summary(tree.dust)
-	plot(tree.dust)
-	text(tree.dust)
-	tree.dust
-
-	tree.dust.train <- tree(relation, dust, subset = train)
-	tree.pred <- predict(tree.dust.train, dust[valid,])
-
 }
 ## jim's
 
