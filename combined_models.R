@@ -11,7 +11,7 @@ library(pls)
 set.seed(1)
 
 # loading in data
-dust <- read.csv('/Users/jimbai/Desktop/urapg/sensor/dummy.csv')
+dust <- read.csv('/Users/edithho/Google Drive/cal/2016 spring/air-quality-sensor_testing/Dust Sensor Comparison.csv')
 X = dust[,4:6]
 Y = dust$ppd60_3
 n = nrow(X)
