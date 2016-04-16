@@ -11,10 +11,9 @@ library(pls)
 set.seed(1)
 
 # loading in data
-dust <- read.csv('/Users/edithho/Google Drive/cal/2016 spring/air-quality-sensor_testing/Dust Sensor Comparison.csv')# pairs(dust[,4:11])
-head(dust)
-X = dust[1:1000,4:6]
-Y = dust$ppd60_3[1:1000]
+dust <- read.csv('/Users/jimbai/Desktop/urapg/sensor/dummy.csv')
+X = dust[,4:6]
+Y = dust$ppd60_3
 n = nrow(X)
 train = sample(1:nrow(dust), (nrow(dust) * .7))
 valid = -train
@@ -102,8 +101,8 @@ l1LinearReg <- function(dust, X, Y, train, valid, relation) {
 ###ridge
 Ridge <- function(dust, X, Y, train, valid) {
   grid=10^seq(-1,-3,length=100)
+  X <- as.matrix(X)
   ridge.mod=glmnet(X,Y,alpha=0,lambda=grid)
-  dim(coef(ridge.mod))  #6*100
   
   cv.out=cv.glmnet(X[train,],Y[train],alpha=0)
   bestlam1=cv.out$lambda.min #bestlam:lambda that results in the smallest cv error
@@ -117,6 +116,7 @@ Ridge <- function(dust, X, Y, train, valid) {
 
 Lasso <- function(dust, X, Y, train, valid) {
   ###lasso
+  X <- as.matrix(X)
   lasso.mod=glmnet(X[train,],Y[train],alpha=1,lambda=grid)
   cv.out=cv.glmnet(X[train,],Y[train],alpha=1)
   bestlam2=cv.out$lambda.min
@@ -146,6 +146,5 @@ for (i in 1:6){
 }
 
 print(result[[index]]$name)
-print(result[[index]]$error)
-
+print(min)
 
