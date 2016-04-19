@@ -10,13 +10,10 @@ library(plsdof)
 library(pls)
 set.seed(1)
 
-<<<<<<< HEAD
 # Loading in data
 dust = read.csv('/Users/jimbai/Desktop/urapg/sensor/dummy.csv')
-=======
 # loading in data
 dust <- read.csv('/Users/edithho/Google Drive/cal/2016 spring/air-quality-sensor_testing/Dust Sensor Comparison.csv')
->>>>>>> 2d450f1a1c953da1701e59854fcd7e318202d789
 X = dust[,4:6]
 Y = dust$ppd60_3
 n = nrow(X)
