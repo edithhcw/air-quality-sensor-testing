@@ -1,3 +1,8 @@
+# This code is written by Edith Ho, Jim Bai, and Yachuan Liu  in April 2016,
+# under the supervision of Dilek Uz, for a research project in Berkeley, CA.
+# This script provides some basic machine learning algorithms, and selects 
+# the best one (lowest MSE) for predicting air quality with a censor.
+
 # libraries
 library(ggplot2)
 library(glmnet)
