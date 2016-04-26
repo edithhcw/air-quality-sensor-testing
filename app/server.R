@@ -52,12 +52,13 @@ shinyServer(
           attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
         ) %>%
         setView(lng = -93.85, lat = 37.45, zoom = 4)
+      leaflet(cities) %>% addTiles() %>%
+        addCircles(lng = ~Long, lat = ~Lat, weight = 1,
+                   radius = ~sqrt(Pop) * 30, popup = ~City
+        )
     })
     
-    leaflet(cities) %>% addTiles() %>%
-      addCircles(lng = ~Long, lat = ~Lat, weight = 1,
-                 radius = ~sqrt(Pop) * 30, popup = ~City
-      )
+    
     observe({
       zcode <- input$num
       if(!is.na(zcode)){
