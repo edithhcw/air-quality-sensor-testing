@@ -9,6 +9,7 @@ zip <- read.csv("data/zipcode.csv")
 sites <- read.csv('data/aqs_sites.csv')
 sites_small <- sites[,c("Latitude", "Longitude", 'City.Name', 'State.Name')]
 sites_small <- na.omit(sites_small)
+sites_small$readings <- sample(c(0:500), nrow(sites_small), replace = T)
 sites_ca <- sites_small[sites_small$State.Name == 'California',]
 sites_ny <- sites_small[sites_small$State.Name == 'New York',]
 source("helpers.R")
@@ -35,8 +36,9 @@ shinyServer(
     # This reactive expression represents the palette function,
     # which changes as the user makes selections in UI.
     colorpal <- reactive({
-      colorNumeric(input$colors, quakes$mag)
+      colorNumeric(input$colors, sites_small$readings)
     })
+    pal <- colorpal()
     
     output$map <- renderLeaflet({
       leaflet() %>%
@@ -45,9 +47,15 @@ shinyServer(
           attribution = 'Maps by <a href="http://www.mapbox.com/">Mapbox</a>'
         ) %>%
         setView(lng = -93.85, lat = 37.45, zoom = 4)
+    })
+    
+    observe({
+      pal <- colorpal()
+      
       leaflet(sites_small) %>% addTiles() %>%
         addCircles(lng = ~Longitude, lat = ~Latitude, weight = 1,
-                   radius = 1000, popup = ~City.Name
+                   radius = 1000, popup = ~City.Name, color = "#777777", 
+                   fillColor = ~pal(readings), fillOpacity = 0.7
         )
     })
     
@@ -59,7 +67,7 @@ shinyServer(
             index <- getIndex(zcode)
             lat <- zip$latitude[index]
             lng <- zip$longitude[index]
-            leafletProxy("map") %>% setView(lng, lat, zoom = 18)
+            leafletProxy("map") %>% setView(lng, lat, zoom = 13)
             leafletProxy("map") %>% clearPopups
             leafletProxy("map") %>% addPopups(lng, lat, "Here I am")
         } else {
@@ -77,7 +85,7 @@ shinyServer(
     
     # Use a separate observer to recreate the legend as needed.
     observe({
-      proxy <- leafletProxy("map", data = quakes)
+      proxy <- leafletProxy("map", data = sites_small)
       
       # Remove any existing legend, and only if the legend is
       # enabled, create a new one.
@@ -85,7 +93,7 @@ shinyServer(
       if (input$legend) {
         pal <- colorpal()
         proxy %>% addLegend(position = "bottomright",
-                            pal = pal, values = ~mag
+                            pal = pal, values = ~readings
         )
       }
     })
