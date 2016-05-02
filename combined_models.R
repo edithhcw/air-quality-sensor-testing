@@ -34,7 +34,7 @@ LinearReg <- function(dust, X, Y, train, valid, relation) {
 	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
 	par(new = T)
 	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
 	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
 	par(new = F)
 
@@ -55,7 +55,7 @@ RanForest <- function(dust, X, Y, train, valid, relation) {
 	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
 	par(new = T)
 	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
 	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
 	par(new = F)
 	importance(dust.rf)
@@ -81,7 +81,7 @@ PCR <- function(dust, X, Y, train, valid, relation) {
 	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
 	par(new = T)
 	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
 	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
 	par(new = F)
 	
@@ -100,7 +100,7 @@ l1LinearReg <- function(dust, X, Y, train, valid, relation) {
 	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
 	par(new = T)
 	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
 	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
 	par(new = F)
 	
@@ -123,7 +123,7 @@ Ridge <- function(dust, X, Y, train, valid) {
   	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
   	par(new = T)
   	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-  	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+  	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
   	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
   	par(new = F)
   	
@@ -145,7 +145,7 @@ Lasso <- function(dust, X, Y, train, valid) {
   	plot(Y[valid], col = 'orange', type = 'l', ylab = '', xaxt='n', yaxt='n')
   	par(new = T)
   	plot(X[,3], col = 'firebrick1', type = 'l', ylab = '', xaxt='n', yaxt='n')
-  	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n",
+  	legend("topleft",c('Predicted', 'Expensive', 'Cheap'), bty = "n", cex = .7,
   	       lty=c(1,1),lwd=c(2.5,2.5),col=c('cornflowerblue', 'orange', 'firebrick1')) 
   	par(new = F)
 
